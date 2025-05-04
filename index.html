@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>程序员寒山 大模型测试平台</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="header">
+        <h1 class="title-main">程序员寒山</h1>
+        <h2 class="title-sub">大模型测试平台</h2>
+        <button id="addCard" class="add-button">添加测试模型</button>
+    </div>
+
+    <div class="input-section">
+        <div class="input-container">
+            <div class="input-wrapper">
+                <textarea id="globalInput" placeholder="请输入测试文本，或从右侧选择测试用例..."></textarea>
+                <select id="testCases" class="test-select">
+                    <option value="">- 选择测试用例 -</option>
+                    <option value="知识问答">1. 知识问答：三国演义空城计</option>
+                    <option value="逻辑推理">2. 逻辑推理：谁在说谎</option>
+                    <option value="语言理解">3. 语言理解：画蛇添足成语</option>
+                    <option value="句子生成">4. 句子生成：春天开头句子</option>
+                    <option value="代码生成">5. 代码生成：快速排序算法</option>
+                    <option value="翻译能力">6. 翻译能力：不到长城非好汉</option>
+                    <option value="数学计算">7. 数学计算：促销价格计算</option>
+                    <option value="情感分析">8. 情感分析：文本情感判断</option>
+                    <option value="创意联想">9. 创意联想：云朵的味道</option>
+                    <option value="常识判断">10. 常识判断：骆驼驼峰储水</option>
+                </select>
+            </div>
+            <button id="runTests" class="run-button">执行测试</button>
+        </div>
+    </div>
+
+    <div class="model-config-modal" id="modelConfigModal">
+        <div class="modal-content">
+            <h2>模型配置</h2>
+            <select id="modelType">
+                <option value="ollama">Ollama 本地模型</option>
+                <option value="deepseek">DeepSeek API</option>
+            </select>
+            <div id="ollamaConfig" class="config-section">
+                <label>选择模型：</label>
+                <select id="ollamaModel">
+                    <option value="">加载中...</option>
+                </select>
+            </div>
+            <div id="deepseekConfig" class="config-section" style="display:none;">
+                <label>API Key：</label>
+                <input type="text" id="deepseekKey" placeholder="输入 DeepSeek API Key">
+                <label>模型：</label>
+                <input type="text" id="deepseekModel" placeholder="deepseek-chat">
+            </div>
+            <button id="saveConfig">保存配置</button>
+            <button id="cancelConfig">取消</button>
+        </div>
+    </div>
+
+    <div class="cards-container" id="cardsContainer">
+        <!-- 卡片将动态添加到这里 -->
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
