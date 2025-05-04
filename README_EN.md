@@ -26,7 +26,7 @@ This is a tool platform for comparing the performance of different large languag
 
 1. Clone repository:
 ```bash
-git clone https://github.com/your-repo/multi_models_compare_test.git
+git clone https://github.com/HanShan006/multi_models_compare_test.git
 cd multi_models_compare_test
 ```
 

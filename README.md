@@ -26,7 +26,7 @@
 
 1. 克隆仓库:
 ```bash
-git clone https://github.com/your-repo/multi_models_compare_test.git
+git clone https://github.com/HanShan006/multi_models_compare_test.git
 cd multi_models_compare_test
 ```
 
