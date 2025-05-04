@@ -1,6 +1,6 @@
 # 大模型对比测试平台
 
-![界面截图](screenshot.png)
+![alt text](image-1.png)
 
 ## 项目简介
 

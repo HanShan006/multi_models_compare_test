@@ -1,6 +1,6 @@
 # Multi-Model Comparison Test Platform
 
-![Screenshot](screenshot.png)
+![alt text](image.png)
 
 ## Project Introduction
 
