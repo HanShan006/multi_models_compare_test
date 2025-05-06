@@ -75,6 +75,10 @@ def chat():
 
 def call_ollama(input_text, model_name):
     def generate_response():
+        # 用于检测重复输出的变量
+        last_responses = []
+        repeat_count = 0
+        
         try:
             response = requests.post('http://localhost:11434/api/generate', 
                                    json={
@@ -104,7 +108,30 @@ def call_ollama(input_text, model_name):
                     try:
                         data = json.loads(line)
                         if 'response' in data:
-                            yield json.dumps({'text': data['response']})
+                            current_response = data['response']
+                            
+                            # 更新最近的响应历史
+                            last_responses.append(current_response)
+                            if len(last_responses) > 5:  # 减少历史记录数量，更快检测到重复
+                                last_responses.pop(0)
+                            
+                            # 检查是否有连续重复的输出
+                            if len(last_responses) >= 2:  # 降低检测阈值到2次
+                                # 清理文本，移除空白字符
+                                cleaned_responses = [r.strip() for r in last_responses[-2:]]
+                                
+                                # 检查最近两次响应是否相同
+                                if cleaned_responses[0] and cleaned_responses[1] and cleaned_responses[0] == cleaned_responses[1]:
+                                    # 检查是否包含常见的LaTeX格式标记
+                                    if '\\boxed' in current_response or '$' in current_response:
+                                        print("检测到LaTeX格式的重复输出，停止生成")
+                                        break
+                                    # 如果响应长度超过10个字符也认为是有效的重复
+                                    elif len(current_response.strip()) > 10:
+                                        print("检测到长文本重复输出，停止生成")
+                                        break
+                            
+                            yield json.dumps({'text': current_response})
                     except json.JSONDecodeError as e:
                         print(f"JSON解析错误: {e}")
                         continue
