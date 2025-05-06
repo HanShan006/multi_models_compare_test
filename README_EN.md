@@ -15,6 +15,22 @@ This is a tool platform for comparing the performance of different large languag
 - **Performance metrics**: Show response time and resource usage
 - **Modern UI**: Intuitive card-based layout
 
+## Change History
+
+### 2025/5/7
+- Added author information and functionality documentation to all major code files
+  - server.py: Backend service documentation
+  - script.js: Frontend implementation documentation
+  - styles.css: Style layout documentation
+  - index.html: Main page functionality documentation
+
+### 2025/5/1
+- Initial version release
+  - Implemented basic multi-model comparison testing
+  - Added support for DeepSeek API and Ollama local models
+  - Included 10 preset test cases
+  - Implemented streaming response and parallel testing
+
 ## Requirements
 
 - Python 3.8+

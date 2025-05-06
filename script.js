@@ -1,3 +1,16 @@
+/**
+ * 作者：程序员寒山
+ * 邮箱：han_shan2000@163.com
+ * 
+ * 功能简介：
+ * 这是一个前端JavaScript实现，主要功能包括：
+ * 1. 支持多模型并行测试和比较
+ * 2. 实现模型卡片的动态创建和管理
+ * 3. 支持Ollama本地模型和DeepSeek API的配置
+ * 4. 提供多种预设测试用例
+ * 5. 实现流式输出的实时显示
+ */
+
 class ModelCard {
     constructor(config) {
         this.config = config;

@@ -1,3 +1,15 @@
+"""
+作者：程序员寒山
+邮箱：han_shan2000@163.com
+
+功能简介：
+这是一个Flask后端服务器，主要功能包括：
+1. 提供与Ollama和DeepSeek大模型的API交互接口
+2. 处理聊天请求并支持流式响应
+3. 管理系统配置和模型参数
+4. 提供系统资源监控
+"""
+
 from flask import Flask, request, jsonify, Response, send_from_directory
 import os
 import psutil
