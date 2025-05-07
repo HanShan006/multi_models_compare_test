@@ -18,7 +18,7 @@ This is a tool platform for comparing the performance of different large languag
 ## Change History
 
 ### 2025/5/7
-- Added author information and functionality documentation to all major code files
+- Added functionality documentation to all major code files
   - server.py: Backend service documentation
   - script.js: Frontend implementation documentation
   - styles.css: Style layout documentation
