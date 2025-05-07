@@ -135,9 +135,14 @@ def call_ollama(input_text, model_name):
                                 
                                 # 检查最近两次响应是否相同
                                 if cleaned_responses[0] and cleaned_responses[1] and cleaned_responses[0] == cleaned_responses[1]:
-                                    # 检查是否包含常见的LaTeX格式标记
-                                    if '\\boxed' in current_response or '$' in current_response:
-                                        print("检测到LaTeX格式的重复输出，停止生成")
+                                    # 检查是否包含常见的LaTeX格式标记或代码块
+                                    if ('\\boxed' in current_response or 
+                                        '$' in current_response or 
+                                        '```' in current_response or
+                                        '**答案**' in current_response):
+                                        print("检测到格式化输出（LaTeX/代码块）重复，停止生成")
+                                        # 发送一个特殊标记，提示前端停止更新
+                                        yield json.dumps({'text': '\n[输出结束]'})
                                         break
                                     # 如果响应长度超过10个字符也认为是有效的重复
                                     elif len(current_response.strip()) > 10:
