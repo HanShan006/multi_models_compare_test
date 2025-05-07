@@ -25,8 +25,16 @@ class ModelCard {
         const modelInfo = document.createElement('div');
         modelInfo.className = 'model-info';
         modelInfo.innerHTML = `
-            <div class="model-type">${this.config.type === 'ollama' ? 'Ollama本地模型' : 'DeepSeek API'}</div>
-            <div>模型: ${this.config.type === 'ollama' ? this.config.ollamaModel : this.config.deepseekModel}</div>
+            <div class="model-type">${
+                this.config.type === 'ollama' ? 'Ollama本地模型' : 
+                this.config.type === 'vllm' ? 'VLLM本地模型' : 
+                'DeepSeek API'
+            }</div>
+            <div>模型: ${
+                this.config.type === 'ollama' ? this.config.ollamaModel :
+                this.config.type === 'vllm' ? this.config.vllmModel :
+                this.config.deepseekModel
+            }</div>
             <div class="current-test-title" style="color: #666; font-size: 0.9em; margin-top: 5px;"></div>
         `;
         
@@ -208,12 +216,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    // 初始化时获取VLLM配置
+    try {
+        const response = await fetch('http://localhost:5001/api/config/vllm');
+        if (response.ok) {
+            const configData = await response.json();
+            document.getElementById('vllmModel').value = configData.model;
+            document.getElementById('vllmHost').value = configData.host;
+            document.getElementById('vllmPort').value = configData.port;
+        }
+    } catch (error) {
+        console.error('初始化VLLM配置失败:', error);
+    }
+
     modelTypeSelect.addEventListener('change', async () => {
-        const isOllama = modelTypeSelect.value === 'ollama';
-        ollamaConfig.style.display = isOllama ? 'block' : 'none';
-        deepseekConfig.style.display = isOllama ? 'none' : 'block';
+        const selectedType = modelTypeSelect.value;
+        ollamaConfig.style.display = selectedType === 'ollama' ? 'block' : 'none';
+        vllmConfig.style.display = selectedType === 'vllm' ? 'block' : 'none';
+        deepseekConfig.style.display = selectedType === 'deepseek' ? 'block' : 'none';
         
-        if (isOllama) {
+        if (selectedType === 'ollama') {
             loadOllamaModels();
         } else {
             // 加载DeepSeek配置
@@ -247,6 +269,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (type === 'ollama') {
             if (!config.ollamaModel) {
                 alert('请选择Ollama模型');
+                return;
+            }
+        } else if (type === 'vllm') {
+            config.vllmModel = document.getElementById('vllmModel').value;
+            config.vllmHost = document.getElementById('vllmHost').value;
+            config.vllmPort = document.getElementById('vllmPort').value;
+            if (!config.vllmHost || !config.vllmPort) {
+                alert('请填写VLLM服务配置');
                 return;
             }
         } else {

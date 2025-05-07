@@ -52,6 +52,7 @@
             <h2>模型配置</h2>
             <select id="modelType">
                 <option value="ollama">Ollama 本地模型</option>
+                <option value="vllm">VLLM 本地模型</option>
                 <option value="deepseek">DeepSeek API</option>
             </select>
             <div id="ollamaConfig" class="config-section">
@@ -59,6 +60,14 @@
                 <select id="ollamaModel">
                     <option value="">加载中...</option>
                 </select>
+            </div>
+            <div id="vllmConfig" class="config-section" style="display:none;">
+                <label>模型：</label>
+                <input type="text" id="vllmModel" placeholder="./models/qwen3-4b" readonly>
+                <label>服务地址：</label>
+                <input type="text" id="vllmHost" placeholder="localhost">
+                <label>端口：</label>
+                <input type="text" id="vllmPort" placeholder="8000">
             </div>
             <div id="deepseekConfig" class="config-section" style="display:none;">
                 <label>API Key：</label>

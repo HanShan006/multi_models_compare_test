@@ -27,6 +27,20 @@ CORS(app)
 config = configparser.ConfigParser()
 config.read('config.ini')
 
+@app.route('/api/config/vllm', methods=['GET'])
+def get_vllm_config():
+    try:
+        host = config.get('vllm', 'host')
+        port = config.get('vllm', 'port')
+        model = config.get('vllm', 'model')
+        return jsonify({
+            'host': host,
+            'port': port,
+            'model': model
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/config/deepseek', methods=['GET'])
 def get_deepseek_config():
     try:
@@ -79,6 +93,8 @@ def chat():
     try:
         if config['type'] == 'ollama':
             return call_ollama(input_text, config['ollamaModel'])
+        elif config['type'] == 'vllm':
+            return call_vllm(input_text)
         else:
             # 使用配置文件中的API key，而不是前端传来的key
             api_key = config.get('deepseek', 'api_key')
@@ -161,6 +177,60 @@ def call_ollama(input_text, model_name):
 
     return Response(generate_response(), mimetype='application/json')
 
+def call_vllm(input_text):
+    def generate_response():
+        try:
+            host = config.get('vllm', 'host')
+            port = config.get('vllm', 'port')
+            
+            response = requests.post(
+                f'http://{host}:{port}/v1/chat/completions',
+                json={
+                    'messages': [{'role': 'user', 'content': input_text}],
+                    'stream': True,
+                    'temperature': 0.7,
+                    'max_tokens': 2000
+                },
+                stream=True
+            )
+            
+            if response.status_code != 200:
+                error_msg = f'VLLM API调用失败: HTTP {response.status_code}'
+                try:
+                    error_data = response.json()
+                    if 'error' in error_data:
+                        error_msg += f" - {error_data['error']}"
+                except:
+                    pass
+                print(f"VLLM错误: {error_msg}")
+                yield json.dumps({'error': error_msg})
+                return
+
+            for line in response.iter_lines():
+                if line:
+                    try:
+                        decoded_line = line.decode('utf-8')
+                        if decoded_line.startswith('data: '):
+                            data_str = decoded_line[6:]  # 跳过'data: '前缀
+                            try:
+                                data = json.loads(data_str)
+                                if 'choices' in data and len(data['choices']) > 0:
+                                    content = data['choices'][0]['delta'].get('content', '')
+                                    if content:
+                                        yield json.dumps({'text': content})
+                            except json.JSONDecodeError:
+                                continue
+                    except UnicodeDecodeError as e:
+                        print(f"解码错误: {e}")
+                        continue
+
+        except requests.exceptions.RequestException as e:
+            error_msg = f'无法连接到VLLM服务: {str(e)}'
+            print(f"VLLM连接错误: {error_msg}")
+            yield json.dumps({'error': error_msg})
+
+    return Response(generate_response(), mimetype='application/json')
+
 def call_deepseek(input_text, api_key, model_name):
     def generate_response():
         try:
@@ -233,4 +303,9 @@ def serve_static(path):
     return send_from_directory('.', path)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001)
+    try:
+        port = int(config.get('server', 'port', fallback=5001))
+    except (configparser.Error, ValueError):
+        port = 5001
+    
+    app.run(host='0.0.0.0', port=port)
